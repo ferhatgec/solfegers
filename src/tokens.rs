@@ -59,14 +59,16 @@ impl InitTokens {
         data.to_string()
     }
 
-    pub fn init_tokens(&mut self) {
-        self.generated_data =   self.to(
-                            "/* lol */\n\
+    pub fn init_tokens(&mut self, is_bf: bool) {
+        if !is_bf {
+            self.generated_data = self.to(
+                "/* lol */\n\
                                  #include <stdio.h>\n\
                                  #include <stdlib.h>\n\
                                  \n\n\
                                  int main(int argc, char** argv) {\n\
                                  unsigned char* ptr = calloc(30000, 1);\n");
+        }
         
         self.add_token("Do", SolfegeTokens::Do);
         self.add_token("Do#", SolfegeTokens::DoSharp);
@@ -110,7 +112,7 @@ impl InitTokens {
     pub fn codegen(&mut self, re: SolfegeTokens, ti: String) {
         match re {
             SolfegeTokens::Do => {
-                self.generated_data.push_str("++ptr;\n");
+                self.generated_data.push_str("++ptr;\n")
             },
             SolfegeTokens::DoSharp => {
                 if self.is_statement {
@@ -118,28 +120,28 @@ impl InitTokens {
                 }
             },
             SolfegeTokens::Di => {
-                self.generated_data.push_str(";\n");
+                self.generated_data.push_str(";\n")
             },
             SolfegeTokens::Re => {
-                self.generated_data.push_str("--ptr;\n");
+                self.generated_data.push_str("--ptr;\n")
             },
             SolfegeTokens::ReSharp => {
-                self.generated_data.push_str("}\n");
+                self.generated_data.push_str("}\n")
             },
             SolfegeTokens::Ri => {
-                self.generated_data.push_str("*ti = 0;\n");
+                self.generated_data.push_str("*ti = 0;\n")
             },
             SolfegeTokens::Mi => {
-                self.generated_data.push_str("++*ptr;\n");
+                self.generated_data.push_str("++*ptr;\n")
             },
             SolfegeTokens::MiSharp => {
-                self.generated_data.push_str("{\n\n");
+                self.generated_data.push_str("{\n\n")
             },
             SolfegeTokens::Fa => {
-                self.generated_data.push_str("--*ptr;\n");
+                self.generated_data.push_str("--*ptr;\n")
             },
             SolfegeTokens::FaSharp => {
-                self.generated_data.push('(');
+                self.generated_data.push('(')
             },
             SolfegeTokens::Fi => {
                 self.generated_data.push_str("printf(\"%s\", \"");
@@ -147,10 +149,10 @@ impl InitTokens {
                 self.is_print = true;
             },
             SolfegeTokens::Sol => {
-                self.generated_data.push_str("putchar(*ptr);\n");
+                self.generated_data.push_str("putchar(*ptr);\n")
             },
             SolfegeTokens::SolSharp => {
-                self.generated_data.push(')');
+                self.generated_data.push(')')
             },
             SolfegeTokens::Si => {
                 self.generated_data.push_str(&format!("{}\");\n", self.print_data));
@@ -160,10 +162,10 @@ impl InitTokens {
             },
             SolfegeTokens::SiSharp => {
                 // Si# ... La#
-                self.is_put = true;
+                self.is_put = true
             },
             SolfegeTokens::La => {
-                self.generated_data.push_str("*ptr = getchar();\n");
+                self.generated_data.push_str("*ptr = getchar();\n")
             },
             SolfegeTokens::LaSharp => {
                 self.generated_data.push_str(&self.put_data);
@@ -182,7 +184,7 @@ impl InitTokens {
                 self.generated_data.push_str("if");
             },
             SolfegeTokens::Ti => {
-                self.generated_data.push_str("break;\n");
+                self.generated_data.push_str("break;\n")
             },
             SolfegeTokens::Te => {
                 if self.is_statement {
@@ -215,6 +217,36 @@ impl InitTokens {
                     self.print_data.push(' ');
                 }
             }
+        }
+    }
+
+    pub fn bf_to_solfege(&mut self, re: char) {
+        match re {
+            '>' => {
+                self.generated_data.push_str("Do ")
+            },
+            '<' => {
+                self.generated_data.push_str("Re ")
+            },
+            '+' => {
+                self.generated_data.push_str("Mi ")
+            },
+            '-' => {
+                self.generated_data.push_str("Fa ")
+            },
+            '.' => {
+                self.generated_data.push_str("Sol ")
+            },
+            ',' => {
+                self.generated_data.push_str("La ")
+            },
+            '[' => {
+                self.generated_data.push_str("Ra Fa# Do# Sol# Mi#\n")
+            },
+            ']' => {
+                self.generated_data.push_str("Re# ");
+            }
+            _ => {}
         }
     }
 
