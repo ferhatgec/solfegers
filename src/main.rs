@@ -37,6 +37,10 @@ fn main() {
     let arguments: Vec<String> = std::env::args().collect();
 
     if arguments.len() < 2 {
+        println!("SolfegeRs - An esoteric language implementation in Rust\n\
+        ----\n\
+        --bf : Brainfuck to Solfege codegen");
+
         std::process::exit(1);
     }
 
